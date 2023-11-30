@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module ActionViewExtensions
     # This module creates SimpleForm wrappers around default form_for and fields_for.
@@ -10,17 +11,15 @@ module SimpleForm
     #   end
     #
     module FormHelper
-
       def simple_form_for(record, options = {}, &block)
         options[:builder] ||= SimpleForm::FormBuilder
         options[:html] ||= {}
-        unless options[:html].key?(:novalidate)
-          options[:html][:novalidate] = !SimpleForm.browser_validations
-        end
+        options[:html][:novalidate] = !SimpleForm.browser_validations unless options[:html].key?(:novalidate)
         if options[:html].key?(:class)
           options[:html][:class] = [SimpleForm.form_class, options[:html][:class]].compact
         else
-          options[:html][:class] = [SimpleForm.form_class, SimpleForm.default_form_class, simple_form_css_class(record, options)].compact
+          options[:html][:class] =
+            [SimpleForm.form_class, SimpleForm.default_form_class, simple_form_css_class(record, options)].compact
         end
 
         with_simple_form_field_error_proc do
@@ -29,7 +28,10 @@ module SimpleForm
       end
 
       def simple_fields_for(record_name, record_object = nil, options = {}, &block)
-        options, record_object = record_object, nil if record_object.is_a?(Hash) && record_object.extractable_options?
+        if record_object.is_a?(Hash) && record_object.extractable_options?
+          options = record_object
+          record_object = nil
+        end
         options[:builder] ||= SimpleForm::FormBuilder
 
         with_simple_form_field_error_proc do

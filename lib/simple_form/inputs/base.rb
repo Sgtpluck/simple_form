@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'active_support/core_ext/string/output_safety'
 require 'action_view/helpers'
 
@@ -34,13 +35,13 @@ module SimpleForm
       self.default_options = {}
 
       def self.enable(*keys)
-        options = self.default_options.dup
+        options = default_options.dup
         keys.each { |key| options.delete(key) }
         self.default_options = options
       end
 
       def self.disable(*keys)
-        options = self.default_options.dup
+        options = default_options.dup
         keys.each { |key| options[key] = false }
         self.default_options = options
       end
@@ -72,9 +73,7 @@ module SimpleForm
 
         input_html_classes = self.input_html_classes
 
-        if SimpleForm.input_class && input_html_classes.any?
-          input_html_classes << SimpleForm.input_class
-        end
+        input_html_classes << SimpleForm.input_class if SimpleForm.input_class && input_html_classes.any?
 
         @input_html_options = html_options_for(:input, input_html_classes).tap do |o|
           o[:readonly]  = true if has_readonly?
@@ -102,9 +101,9 @@ module SimpleForm
       private
 
       def limit
-        if column
-          decimal_or_float? ? decimal_limit : column_limit
-        end
+        return unless column
+
+        decimal_or_float? ? decimal_limit : column_limit
       end
 
       def column_limit
@@ -175,8 +174,8 @@ module SimpleForm
         model_names = lookup_model_names.dup
         lookups     = []
 
-        while !model_names.empty?
-          joined_model_names = model_names.join(".")
+        until model_names.empty?
+          joined_model_names = model_names.join('.')
           model_names.shift
 
           lookups << :"#{joined_model_names}.#{lookup_action}.#{reflection_or_attribute_name}"
@@ -195,9 +194,9 @@ module SimpleForm
 
           wrapper_options.merge(options) do |key, oldval, newval|
             case key.to_s
-            when "class"
+            when 'class'
               Array(oldval) + Array(newval)
-            when "data", "aria"
+            when 'data', 'aria'
               oldval.merge(newval)
             else
               newval
@@ -213,13 +212,9 @@ module SimpleForm
         error_class     = wrapper_options.delete(:error_class)
         valid_class     = wrapper_options.delete(:valid_class)
 
-        if error_class.present? && has_errors?
-          wrapper_options[:class] = "#{wrapper_options[:class]} #{error_class}"
-        end
+        wrapper_options[:class] = "#{wrapper_options[:class]} #{error_class}" if error_class.present? && has_errors?
 
-        if valid_class.present? && valid?
-          wrapper_options[:class] = "#{wrapper_options[:class]} #{valid_class}"
-        end
+        wrapper_options[:class] = "#{wrapper_options[:class]} #{valid_class}" if valid_class.present? && valid?
 
         wrapper_options
       end

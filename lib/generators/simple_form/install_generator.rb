@@ -1,27 +1,30 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      desc "Copy SimpleForm default files"
-      source_root File.expand_path('../templates', __FILE__)
+      desc 'Copy SimpleForm default files'
+      source_root File.expand_path('templates', __dir__)
       class_option :template_engine, desc: 'Template engine to be invoked (erb, haml or slim).'
       class_option :bootstrap, type: :boolean, desc: 'Add the Bootstrap 5 wrappers to the SimpleForm initializer.'
-      class_option :foundation, type: :boolean, desc: 'Add the Zurb Foundation 5 wrappers to the SimpleForm initializer.'
+      class_option :foundation, type: :boolean,
+                                desc: 'Add the Zurb Foundation 5 wrappers to the SimpleForm initializer.'
 
       def info_bootstrap
         return if options.bootstrap? || options.foundation?
-        puts "SimpleForm supports Bootstrap 5 and Zurb Foundation 5. If you want "\
-          "a configuration that is compatible with one of these frameworks, then please " \
-          "re-run this generator with --bootstrap or --foundation as an option."
+
+        puts 'SimpleForm supports Bootstrap 5 and Zurb Foundation 5. If you want '\
+          'a configuration that is compatible with one of these frameworks, then please ' \
+          're-run this generator with --bootstrap or --foundation as an option.'
       end
 
       def copy_config
-        template "config/initializers/simple_form.rb"
+        template 'config/initializers/simple_form.rb'
 
         if options[:bootstrap]
-          template "config/initializers/simple_form_bootstrap.rb"
+          template 'config/initializers/simple_form_bootstrap.rb'
         elsif options[:foundation]
-          template "config/initializers/simple_form_foundation.rb"
+          template 'config/initializers/simple_form_foundation.rb'
         end
 
         directory 'config/locales'
@@ -33,9 +36,9 @@ module SimpleForm
       end
 
       def show_readme
-        if behavior == :invoke && options.bootstrap?
-          readme "README"
-        end
+        return unless behavior == :invoke && options.bootstrap?
+
+        readme 'README'
       end
     end
   end

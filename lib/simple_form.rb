@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'action_view'
 require 'action_pack'
 require 'simple_form/action_view_extensions/form_helper'
@@ -26,37 +27,37 @@ module SimpleForm
     SimpleForm::Components.eager_load!
   end
 
-  CUSTOM_INPUT_DEPRECATION_WARN = <<-WARN
-%{name} method now accepts a `wrapper_options` argument. The method definition without the argument is deprecated and will be removed in the next Simple Form version. Change your code from:
+  CUSTOM_INPUT_DEPRECATION_WARN = <<~WARN
+    %<name>s method now accepts a `wrapper_options` argument. The method definition without the argument is deprecated and will be removed in the next Simple Form version. Change your code from:
 
-    def %{name}
+        def %<name>s
 
-to
+    to
 
-    def %{name}(wrapper_options)
+        def %<name>s(wrapper_options)
 
-See https://github.com/heartcombo/simple_form/pull/997 for more information.
+    See https://github.com/heartcombo/simple_form/pull/997 for more information.
   WARN
 
-  FILE_METHODS_DEPRECATION_WARN = <<-WARN
-[SIMPLE_FORM] SimpleForm.file_methods is deprecated and has no effect.
+  FILE_METHODS_DEPRECATION_WARN = <<~WARN
+    [SIMPLE_FORM] SimpleForm.file_methods is deprecated and has no effect.
 
-Since version 5, Simple Form now supports automatically discover of file inputs for the following Gems: activestorage, carrierwave, paperclip, refile and shrine.
-If you are using a custom method that is not from one of the supported Gems, please change your forms to pass the input type explicitly:
+    Since version 5, Simple Form now supports automatically discover of file inputs for the following Gems: activestorage, carrierwave, paperclip, refile and shrine.
+    If you are using a custom method that is not from one of the supported Gems, please change your forms to pass the input type explicitly:
 
-    <%= form.input :avatar, as: :file %>
+        <%= form.input :avatar, as: :file %>
 
-See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-form-cve-2019-16676 for more information.
+    See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-form-cve-2019-16676 for more information.
   WARN
 
   @@configured = false
 
-  def self.configured? #:nodoc:
+  def self.configured? # :nodoc:
     @@configured
   end
 
   def self.deprecator
-    @deprecator ||= ActiveSupport::Deprecation.new("5.3", "SimpleForm")
+    @deprecator ||= ActiveSupport::Deprecation.new('5.3', 'SimpleForm')
   end
 
   ## CONFIGURATION OPTIONS
@@ -101,7 +102,7 @@ See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-
 
   # How the label text should be generated altogether with the required text.
   mattr_accessor :label_text
-  @@label_text = ->(label, required, explicit_label) { "#{required} #{label}" }
+  @@label_text = ->(label, required, _explicit_label) { "#{required} #{label}" }
 
   # You can define the class to be used on all labels. Defaults to none.
   mattr_accessor :label_class
@@ -186,7 +187,7 @@ See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-
   # This gets taken care of semantically by adding an error class to the wrapper tag
   # containing the input.
   mattr_accessor :field_error_proc
-  @@field_error_proc = proc do |html_tag, instance_tag|
+  @@field_error_proc = proc do |html_tag, _instance_tag|
     html_tag
   end
 
@@ -206,7 +207,7 @@ See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-
   # The default wrapper to be used by the FormBuilder.
   mattr_accessor :default_wrapper
   @@default_wrapper = :default
-  @@wrappers = {} #:nodoc:
+  @@wrappers = {} # :nodoc:
 
   mattr_accessor :i18n_scope
   @@i18n_scope = 'simple_form'
@@ -246,7 +247,8 @@ See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-
     SimpleForm::Wrappers::Root.new(builder.to_a, options)
   end
 
-  wrappers class: :input, hint_class: :field_with_hint, error_class: :field_with_errors, valid_class: :field_without_errors do |b|
+  wrappers class: :input, hint_class: :field_with_hint, error_class: :field_with_errors,
+           valid_class: :field_without_errors do |b|
     b.use :html5
 
     b.use :min_max
@@ -268,11 +270,12 @@ See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-
   ## SETUP
 
   def self.default_input_size=(*)
-    SimpleForm.deprecator.warn "[SIMPLE_FORM] SimpleForm.default_input_size= is deprecated and has no effect", caller
+    SimpleForm.deprecator.warn '[SIMPLE_FORM] SimpleForm.default_input_size= is deprecated and has no effect', caller
   end
 
   def self.form_class=(value)
-    SimpleForm.deprecator.warn "[SIMPLE_FORM] SimpleForm.form_class= is deprecated and will be removed in 4.x. Use SimpleForm.default_form_class= instead", caller
+    SimpleForm.deprecator.warn '[SIMPLE_FORM] SimpleForm.form_class= is deprecated and will be removed in 4.x. Use SimpleForm.default_form_class= instead',
+                               caller
     @@form_class = value
   end
 
@@ -329,11 +332,11 @@ See http://blog.plataformatec.com.br/2019/09/incorrect-access-control-in-simple-
   #    <% end %>
   #
   def self.include_component(component)
-    if Module === component
-      SimpleForm::Inputs::Base.include(component)
-    else
+    unless component.is_a?(Module)
       raise TypeError, "SimpleForm.include_component expects a module but got: #{component.class}"
     end
+
+    SimpleForm::Inputs::Base.include(component)
   end
 end
 

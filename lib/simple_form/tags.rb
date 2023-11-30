@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Tags
     module CollectionExtensions
@@ -19,10 +20,16 @@ module SimpleForm
           if @options.fetch(:boolean_style, SimpleForm.boolean_style) == :nested
             label_options = default_html_options.slice(:index, :namespace)
             label_options['class'] = @options[:item_label_class]
-            rendered_item = @template_object.label(@object_name, sanitize_attribute_name(value), rendered_item, label_options)
+            rendered_item = @template_object.label(@object_name, sanitize_attribute_name(value), rendered_item,
+                                                   label_options)
           end
 
-          item_wrapper_tag ? @template_object.content_tag(item_wrapper_tag, rendered_item, class: item_wrapper_class) : rendered_item
+          if item_wrapper_tag
+            @template_object.content_tag(item_wrapper_tag, rendered_item,
+                                         class: item_wrapper_class)
+          else
+            rendered_item
+          end
         end.join.html_safe
       end
 

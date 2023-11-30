@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Wrappers
     # Provides the builder syntax for components. The builder provides
@@ -47,29 +48,30 @@ module SimpleForm
       end
 
       def use(name, options = {})
-        if options && wrapper = options[:wrap_with]
-          @components << Single.new(name, wrapper, options.except(:wrap_with))
-        else
-          @components << Leaf.new(name, options)
-        end
+        @components << if options && wrapper = options[:wrap_with]
+                         Single.new(name, wrapper, options.except(:wrap_with))
+                       else
+                         Leaf.new(name, options)
+                       end
       end
 
-      def optional(name, options = {}, &block)
+      def optional(name, options = {})
         @options[name] = false
         use(name, options)
       end
 
       def wrapper(name, options = nil)
-        if block_given?
-          name, options = nil, name if name.is_a?(Hash)
-          builder = self.class.new(@options)
-          options ||= {}
-          options[:tag] = :div if options[:tag].nil?
-          yield builder
-          @components << Many.new(name, builder.to_a, options)
-        else
-          raise ArgumentError, "A block is required as argument to wrapper"
+        raise ArgumentError, 'A block is required as argument to wrapper' unless block_given?
+
+        if name.is_a?(Hash)
+          options = name
+          name = nil
         end
+        builder = self.class.new(@options)
+        options ||= {}
+        options[:tag] = :div if options[:tag].nil?
+        yield builder
+        @components << Many.new(name, builder.to_a, options)
       end
 
       def to_a

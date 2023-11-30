@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'active_support/core_ext/object/deep_dup'
 require 'simple_form/map_type'
 require 'simple_form/tags'
@@ -38,7 +39,7 @@ module SimpleForm
       @discovery_cache ||= {}
     end
 
-    def initialize(*) #:nodoc:
+    def initialize(*) # :nodoc:
       super
       @object   = convert_to_model(@object)
       @defaults = options[:defaults]
@@ -123,7 +124,7 @@ module SimpleForm
 
       wrapper.render input
     end
-    alias :attribute :input
+    alias attribute input
 
     # Creates a input tag for the given attribute. All the given options
     # are sent as :input_html.
@@ -166,7 +167,8 @@ module SimpleForm
       components = (wrapper.components.map(&:namespace) & ATTRIBUTE_COMPONENTS)
 
       options = options.dup
-      options[:input_html] = options.except(:as, :boolean_style, :collection, :disabled, :label_method, :value_method, :prompt, *components)
+      options[:input_html] =
+        options.except(:as, :boolean_style, :collection, :disabled, :label_method, :value_method, :prompt, *components)
       options = @defaults.deep_dup.deep_merge(options) if @defaults
 
       input      = find_input(attribute_name, options)
@@ -207,10 +209,12 @@ module SimpleForm
     def association(association, options = {}, &block)
       options = options.dup
 
-      return simple_fields_for(*[association,
-        options.delete(:collection), options].compact, &block) if block_given?
+      if block_given?
+        return simple_fields_for(*[association,
+                                   options.delete(:collection), options].compact, &block)
+      end
 
-      raise ArgumentError, "Association cannot be used in forms not associated with an object" unless @object
+      raise ArgumentError, 'Association cannot be used in forms not associated with an object' unless @object
 
       reflection = find_association_reflection(association)
       raise "Association #{association.inspect} not found" unless reflection
@@ -233,7 +237,7 @@ module SimpleForm
     # button implementation (3.2 forward (to delegate to the original when
     # calling `f.button :button`.
     #
-    alias_method :button_button, :button
+    alias button_button button
     def button(type, *args, &block)
       options = args.extract_options!.dup
       options[:class] = [SimpleForm.button_class, options[:class]].compact
@@ -259,8 +263,8 @@ module SimpleForm
       options[:error_html] = options.except(:error_tag, :error_prefix, :error_method)
       column      = find_attribute_column(attribute_name)
       input_type  = default_input_type(attribute_name, column, options)
-      wrapper.find(:error).
-        render(SimpleForm::Inputs::Base.new(self, attribute_name, column, input_type, options))
+      wrapper.find(:error)
+             .render(SimpleForm::Inputs::Base.new(self, attribute_name, column, input_type, options))
     end
 
     # Return the error but also considering its name. This is used
@@ -274,10 +278,10 @@ module SimpleForm
       options = options.dup
 
       options[:error_prefix] ||= if object.class.respond_to?(:human_attribute_name)
-        object.class.human_attribute_name(attribute_name.to_s)
-      else
-        attribute_name.to_s.humanize
-      end
+                                   object.class.human_attribute_name(attribute_name.to_s)
+                                 else
+                                   attribute_name.to_s.humanize
+                                 end
 
       error(attribute_name, options)
     end
@@ -298,14 +302,16 @@ module SimpleForm
       options[:hint_html] = options.except(:hint_tag, :hint)
       if attribute_name.is_a?(String)
         options[:hint] = attribute_name
-        attribute_name, column, input_type = nil, nil, nil
+        attribute_name = nil
+        column = nil
+        input_type = nil
       else
         column      = find_attribute_column(attribute_name)
         input_type  = default_input_type(attribute_name, column, options)
       end
 
-      wrapper.find(:hint).
-        render(SimpleForm::Inputs::Base.new(self, attribute_name, column, input_type, options))
+      wrapper.find(:hint)
+             .render(SimpleForm::Inputs::Base.new(self, attribute_name, column, input_type, options))
     end
 
     # Creates a default label tag for the given attribute. You can give a label
@@ -395,7 +401,8 @@ module SimpleForm
     #
     #   * a block                  => to generate the label + radio or any other component.
     def collection_radio_buttons(method, collection, value_method, text_method, options = {}, html_options = {}, &block)
-      SimpleForm::Tags::CollectionRadioButtons.new(@object_name, method, @template, collection, value_method, text_method, objectify_options(options), @default_options.merge(html_options)).render(&block)
+      SimpleForm::Tags::CollectionRadioButtons.new(@object_name, method, @template, collection, value_method,
+                                                   text_method, objectify_options(options), @default_options.merge(html_options)).render(&block)
     end
 
     # Creates a collection of check boxes for each item in the collection,
@@ -449,7 +456,8 @@ module SimpleForm
     #
     #   * a block                  => to generate the label + check box or any other component.
     def collection_check_boxes(method, collection, value_method, text_method, options = {}, html_options = {}, &block)
-      SimpleForm::Tags::CollectionCheckBoxes.new(@object_name, method, @template, collection, value_method, text_method, objectify_options(options), @default_options.merge(html_options)).render(&block)
+      SimpleForm::Tags::CollectionCheckBoxes.new(@object_name, method, @template, collection, value_method,
+                                                 text_method, objectify_options(options), @default_options.merge(html_options)).render(&block)
     end
 
     # Extract the model names from the object_name mess, ignoring numeric and
@@ -460,7 +468,7 @@ module SimpleForm
     # route[blocks_attributes][0][blocks_learning_object_attributes][1][foo_attributes]
     # ["route", "blocks", "blocks_learning_object", "foo"]
     #
-    def lookup_model_names #:nodoc:
+    def lookup_model_names # :nodoc:
       @lookup_model_names ||= begin
         child_index = options[:child_index]
         names = object_name.to_s.scan(/(?!\d)\w+/).flatten
@@ -471,10 +479,11 @@ module SimpleForm
     end
 
     # The action to be used in lookup.
-    def lookup_action #:nodoc:
+    def lookup_action # :nodoc:
       @lookup_action ||= begin
         action = template.controller && template.controller.action_name
         return unless action
+
         action = action.to_s
         ACTIONS[action] || action
       end
@@ -487,11 +496,11 @@ module SimpleForm
         relation = reflection.klass.all
 
         if reflection.respond_to?(:scope) && reflection.scope
-          if reflection.scope.parameters.any?
-            relation = reflection.klass.instance_exec(object, &reflection.scope)
-          else
-            relation = reflection.klass.instance_exec(&reflection.scope)
-          end
+          relation = if reflection.scope.parameters.any?
+                       reflection.klass.instance_exec(object, &reflection.scope)
+                     else
+                       reflection.klass.instance_exec(&reflection.scope)
+                     end
         else
           order = reflection.options[:order]
           conditions = reflection.options[:conditions]
@@ -510,7 +519,7 @@ module SimpleForm
       when :belongs_to
         (reflection.respond_to?(:options) && reflection.options[:foreign_key]) || :"#{reflection.name}_id"
       when :has_one
-        raise ArgumentError, ":has_one associations are not supported by f.association"
+        raise ArgumentError, ':has_one associations are not supported by f.association'
       else
         if options[:as] == :select || options[:as] == :grouped_select
           html_options = options[:input_html] ||= {}
@@ -544,8 +553,9 @@ module SimpleForm
     # collection is given.
     def default_input_type(attribute_name, column, options)
       return options[:as].to_sym if options[:as]
+
       custom_type = find_custom_type(attribute_name.to_s) and return custom_type
-      return :select             if options[:collection]
+      return :select if options[:collection]
 
       input_type = column.try(:type)
       case input_type
@@ -568,9 +578,11 @@ module SimpleForm
     end
 
     def find_custom_type(attribute_name)
-      SimpleForm.input_mappings.find { |match, type|
+      return unless SimpleForm.input_mappings
+
+      SimpleForm.input_mappings.find do |match, _type|
         attribute_name =~ match
-      }.try(:last) if SimpleForm.input_mappings
+      end.try(:last)
     end
 
     # Internal: Try to discover whether an attribute corresponds to a file or not.
@@ -606,9 +618,9 @@ module SimpleForm
     end
 
     def find_association_reflection(association)
-      if @object.class.respond_to?(:reflect_on_association)
-        @object.class.reflect_on_association(association)
-      end
+      return unless @object.class.respond_to?(:reflect_on_association)
+
+      @object.class.reflect_on_association(association)
     end
 
     # Attempts to find a mapping. It follows the following rules:
@@ -663,11 +675,11 @@ module SimpleForm
 
     def mapping_override(klass)
       name = klass.name
-      if name =~ /^SimpleForm::Inputs/
-        input_name = name.split("::").last
-        attempt_mapping_with_custom_namespace(input_name) ||
-          attempt_mapping(input_name, Object)
-      end
+      return unless name =~ /^SimpleForm::Inputs/
+
+      input_name = name.split('::').last
+      attempt_mapping_with_custom_namespace(input_name) ||
+        attempt_mapping(input_name, Object)
     end
 
     def attempt_mapping(mapping, at)
@@ -701,13 +713,9 @@ module SimpleForm
       valid_class         = SimpleForm.input_field_valid_class
       error_class         = SimpleForm.input_field_error_class
 
-      if error_class.present?
-        input_field_options[:error_class] = error_class
-      end
+      input_field_options[:error_class] = error_class if error_class.present?
 
-      if valid_class.present?
-        input_field_options[:valid_class] = valid_class
-      end
+      input_field_options[:valid_class] = valid_class if valid_class.present?
 
       input_field_options
     end

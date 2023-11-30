@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Inputs
     class ColorInput < Base
       def input(wrapper_options = nil)
-        input_html_options[:type] ||= "color" if html5?
+        input_html_options[:type] ||= 'color' if html5?
 
         merged_input_options = merge_wrapper_options(input_html_options, wrapper_options)
 

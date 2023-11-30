@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Components
     module LabelInput
@@ -22,7 +23,7 @@ module SimpleForm
         method = method(namespace)
 
         if method.arity.zero?
-          SimpleForm.deprecator.warn(SimpleForm::CUSTOM_INPUT_DEPRECATION_WARN % { name: namespace })
+          SimpleForm.deprecator.warn(format(SimpleForm::CUSTOM_INPUT_DEPRECATION_WARN, name: namespace))
 
           method.call
         else

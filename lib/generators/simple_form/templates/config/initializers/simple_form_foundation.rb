@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #
 # Uncomment this and change the path if necessary to include your own
 # components.
@@ -15,7 +16,8 @@ SimpleForm.setup do |config|
   # doesn't provide styles for hints. You will need to provide your own CSS styles for hints.
   # Uncomment them to enable hints.
 
-  config.wrappers :vertical_form, class: :input, hint_class: :field_with_hint, error_class: :error, valid_class: :valid do |b|
+  config.wrappers :vertical_form, class: :input, hint_class: :field_with_hint, error_class: :error,
+                                  valid_class: :valid do |b|
     b.use :html5
     b.use :placeholder
     b.optional :maxlength
@@ -29,7 +31,8 @@ SimpleForm.setup do |config|
     # b.use :hint,  wrap_with: { tag: :span, class: :hint }
   end
 
-  config.wrappers :horizontal_form, tag: 'div', class: 'row', hint_class: :field_with_hint, error_class: :error, valid_class: :valid do |b|
+  config.wrappers :horizontal_form, tag: 'div', class: 'row', hint_class: :field_with_hint, error_class: :error,
+                                    valid_class: :valid do |b|
     b.use :html5
     b.use :placeholder
     b.optional :maxlength
@@ -71,7 +74,8 @@ SimpleForm.setup do |config|
   # Note that you need to adapt this wrapper to your needs. If you need a 4
   # columns form then change the wrapper class to 'small-3', if you need
   # only two use 'small-6' and so on.
-  config.wrappers :inline_form, tag: 'div', class: 'column small-4', hint_class: :field_with_hint, error_class: :error, valid_class: :valid do |b|
+  config.wrappers :inline_form, tag: 'div', class: 'column small-4', hint_class: :field_with_hint, error_class: :error,
+                                valid_class: :valid do |b|
     b.use :html5
     b.use :placeholder
     b.optional :maxlength

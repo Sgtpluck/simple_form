@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Inputs
     class CollectionCheckBoxesInput < CollectionRadioButtonsInput
@@ -15,7 +16,7 @@ module SimpleForm
       end
 
       def item_wrapper_class
-        "checkbox"
+        'checkbox'
       end
     end
   end

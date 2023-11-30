@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails/railtie'
 
 module SimpleForm
@@ -8,11 +9,11 @@ module SimpleForm
     config.after_initialize do
       unless SimpleForm.configured?
         warn '[Simple Form] Simple Form is not configured in the application and will use the default values.' +
-          ' Use `rails generate simple_form:install` to generate the Simple Form configuration.'
+             ' Use `rails generate simple_form:install` to generate the Simple Form configuration.'
       end
     end
 
-    initializer "simple_form.deprecator" do |app|
+    initializer 'simple_form.deprecator' do |app|
       app.deprecators[:simple_form] = SimpleForm.deprecator if app.respond_to?(:deprecators)
     end
   end

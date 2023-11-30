@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Components
     # Needs to be enabled in order to do automatic lookups.
     module Hints
-      def hint(wrapper_options = nil)
+      def hint(_wrapper_options = nil)
         @hint ||= begin
           hint = options[:hint]
 

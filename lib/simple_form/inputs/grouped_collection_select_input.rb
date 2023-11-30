@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Inputs
     class GroupedCollectionSelectInput < CollectionInput
@@ -8,8 +9,8 @@ module SimpleForm
         merged_input_options = merge_wrapper_options(input_html_options, wrapper_options)
 
         @builder.grouped_collection_select(attribute_name, grouped_collection,
-                      group_method, group_label_method, value_method, label_method,
-                      input_options, merged_input_options)
+                                           group_method, group_label_method, value_method, label_method,
+                                           input_options, merged_input_options)
       end
 
       private
@@ -23,7 +24,14 @@ module SimpleForm
 
       # Sample collection
       def collection
-        @collection ||= grouped_collection.map { |collection| group_method.respond_to?(:call) ? group_method.call(collection) : collection.try(:send, group_method) }.detect(&:present?) || []
+        @collection ||= grouped_collection.map do |collection|
+          if group_method.respond_to?(:call)
+            group_method.call(collection)
+          else
+            collection.try(:send,
+                           group_method)
+          end
+        end.detect(&:present?) || []
       end
 
       def group_method

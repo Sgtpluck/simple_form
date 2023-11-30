@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Wrappers
     # A wrapper is an object that holds several components and render them.
@@ -21,11 +22,12 @@ module SimpleForm
       end
 
       def render(input)
-        content = "".html_safe
+        content = ''.html_safe
         options = input.options
 
         components.each do |component|
           next if options[component.namespace] == false
+
           rendered = component.render(input)
           content.safe_concat rendered.to_s if rendered
         end
@@ -66,7 +68,7 @@ module SimpleForm
         (@defaults[:html] || {}).merge(options[:"#{namespace}_html"] || {})
       end
 
-      def html_classes(input, options)
+      def html_classes(_input, _options)
         @defaults[:class].dup
       end
     end

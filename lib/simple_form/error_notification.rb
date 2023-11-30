@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   class ErrorNotification
     delegate :object, :object_name, :template, to: :@builder
@@ -10,9 +11,9 @@ module SimpleForm
     end
 
     def render
-      if has_errors?
-        template.content_tag(error_notification_tag, error_message, html_options)
-      end
+      return unless has_errors?
+
+      template.content_tag(error_notification_tag, error_message, html_options)
     end
 
     protected
@@ -42,7 +43,7 @@ module SimpleForm
       lookups = []
       lookups << :"#{object_name}"
       lookups << :default_message
-      lookups << "Please review the problems below:"
+      lookups << 'Please review the problems below:'
       I18n.t(lookups.shift, scope: :"simple_form.error_notification", default: lookups)
     end
   end

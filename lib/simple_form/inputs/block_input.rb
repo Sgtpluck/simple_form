@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Inputs
     class BlockInput < Base
@@ -7,7 +8,7 @@ module SimpleForm
         @block = block
       end
 
-      def input(wrapper_options = nil)
+      def input(_wrapper_options = nil)
         template.capture(&@block)
       end
     end

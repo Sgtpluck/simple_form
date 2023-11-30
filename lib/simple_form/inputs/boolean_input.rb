@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Inputs
     class BooleanInput < Base
@@ -7,16 +8,14 @@ module SimpleForm
 
         if nested_boolean_style?
           build_hidden_field_for_checkbox +
-            template.label_tag(nil, class: boolean_label_class) {
+            template.label_tag(nil, class: boolean_label_class) do
               build_check_box_without_hidden_field(merged_input_options) +
                 inline_label
-            }
+            end
+        elsif include_hidden?
+          build_check_box(unchecked_value, merged_input_options)
         else
-          if include_hidden?
-            build_check_box(unchecked_value, merged_input_options)
-          else
-            build_check_box_without_hidden_field(merged_input_options)
-          end
+          build_check_box_without_hidden_field(merged_input_options)
         end
       end
 
@@ -31,9 +30,9 @@ module SimpleForm
           merged_input_options = merge_wrapper_options(input_html_options, wrapper_options)
 
           build_hidden_field_for_checkbox +
-            @builder.label(label_target, html_options) {
+            @builder.label(label_target, html_options) do
               build_check_box_without_hidden_field(merged_input_options) + label_text
-            }
+            end
         else
           input(wrapper_options) + label(wrapper_options)
         end
@@ -64,7 +63,8 @@ module SimpleForm
       # we need the hidden field to be *outside* the label (otherwise it
       # generates invalid html - html5 only).
       def build_hidden_field_for_checkbox
-        return "".html_safe if !include_hidden? || !unchecked_value
+        return ''.html_safe if !include_hidden? || !unchecked_value
+
         options = { value: unchecked_value, id: nil, disabled: input_html_options[:disabled] }
         options[:name] = input_html_options[:name] if input_html_options.key?(:name)
         options[:form] = input_html_options[:form] if input_html_options.key?(:form)
@@ -79,10 +79,10 @@ module SimpleForm
       def inline_label
         inline_option = options[:inline_label]
 
-        if inline_option
-          label = inline_option == true ? label_text : html_escape(inline_option)
-          " #{label}".html_safe
-        end
+        return unless inline_option
+
+        label = inline_option == true ? label_text : html_escape(inline_option)
+        " #{label}".html_safe
       end
 
       # Booleans are not required by default because in most of the cases

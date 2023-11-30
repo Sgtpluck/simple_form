@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Inputs
     class HiddenInput < Base

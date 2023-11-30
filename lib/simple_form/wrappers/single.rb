@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Wrappers
     # `Single` is an optimization for a wrapper that has only one component.
@@ -11,10 +12,10 @@ module SimpleForm
 
       def render(input)
         options = input.options
-        if options[namespace] != false
-          content = @component.render(input)
-          wrap(input, options, content) if content
-        end
+        return unless options[namespace] != false
+
+        content = @component.render(input)
+        wrap(input, options, content) if content
       end
 
       private

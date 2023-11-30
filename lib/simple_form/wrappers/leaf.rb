@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Wrappers
     class Leaf
@@ -13,7 +14,7 @@ module SimpleForm
         method = input.method(@namespace)
 
         if method.arity.zero?
-          SimpleForm.deprecator.warn(SimpleForm::CUSTOM_INPUT_DEPRECATION_WARN % { name: @namespace })
+          SimpleForm.deprecator.warn(format(SimpleForm::CUSTOM_INPUT_DEPRECATION_WARN, name: @namespace))
 
           method.call
         else

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Components
     module MinMax
-      def min_max(wrapper_options = nil)
+      def min_max(_wrapper_options = nil)
         if numeric_validator = find_numericality_validator
           validator_options = numeric_validator.options
           input_html_options[:min] ||= minimum_value(validator_options)

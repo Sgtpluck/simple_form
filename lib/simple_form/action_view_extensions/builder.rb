@@ -1,10 +1,10 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module ActionViewExtensions
     # A collection of methods required by simple_form but added to rails default form.
     # This means that you can use such methods outside simple_form context.
     module Builder
-
       # Wrapper for using SimpleForm inside a default rails form.
       # Example:
       #
@@ -20,11 +20,11 @@ module SimpleForm
         options[:defaults] ||= self.options[:defaults]
         options[:wrapper_mappings] ||= self.options[:wrapper_mappings]
 
-        if self.class < ActionView::Helpers::FormBuilder
-          options[:builder] ||= self.class
-        else
-          options[:builder] ||= SimpleForm::FormBuilder
-        end
+        options[:builder] ||= if self.class < ActionView::Helpers::FormBuilder
+                                self.class
+                              else
+                                SimpleForm::FormBuilder
+                              end
         fields_for(*args, options, &block)
       end
     end

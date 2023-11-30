@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Components
     # Needs to be enabled in order to do automatic lookups.
     module Minlength
-      def minlength(wrapper_options = nil)
+      def minlength(_wrapper_options = nil)
         input_html_options[:minlength] ||= minimum_length_from_validation
         nil
       end
@@ -25,9 +26,9 @@ module SimpleForm
       end
 
       def minimum_length_value_from(length_validator)
-        if length_validator
-          length_validator.options[:is] || length_validator.options[:minimum]
-        end
+        return unless length_validator
+
+        length_validator.options[:is] || length_validator.options[:minimum]
       end
     end
   end

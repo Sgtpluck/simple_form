@@ -1,22 +1,23 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Inputs
     class CollectionInput < Base
       BASIC_OBJECT_CLASSES = [String, Integer, Float, NilClass, Symbol, TrueClass, FalseClass]
-      BASIC_OBJECT_CLASSES.push(Fixnum, Bignum) unless 1.class == Integer
+      BASIC_OBJECT_CLASSES.push(Integer, Integer) unless 1.class == Integer
 
       # Default boolean collection for use with selects/radios when no
       # collection is given. Always fallback to this boolean collection.
       # Texts can be translated using i18n in "simple_form.yes" and
       # "simple_form.no" keys. See the example locale file.
       def self.boolean_collection
-        [ [I18n.t(:"simple_form.yes", default: 'Yes'), true],
-          [I18n.t(:"simple_form.no", default: 'No'), false] ]
+        [[I18n.t(:"simple_form.yes", default: 'Yes'), true],
+         [I18n.t(:"simple_form.no", default: 'No'), false]]
       end
 
       def input(wrapper_options = nil)
         raise NotImplementedError,
-          "input should be implemented by classes inheriting from CollectionInput"
+              'input should be implemented by classes inheriting from CollectionInput'
       end
 
       def input_options
@@ -57,7 +58,8 @@ module SimpleForm
       # SimpleForm.collection_label_methods and
       # SimpleForm.collection_value_methods.
       def detect_collection_methods
-        label, value = options.delete(:label_method), options.delete(:value_method)
+        label = options.delete(:label_method)
+        value = options.delete(:value_method)
 
         unless label && value
           common_method_for = detect_common_display_methods
@@ -80,7 +82,7 @@ module SimpleForm
         end
       end
 
-      def detect_method_from_class(collection_classes)
+      def detect_method_from_class(_collection_classes)
         sample = collection.first || collection.last
 
         { label: SimpleForm.collection_label_methods.find { |m| sample.respond_to?(m) },
@@ -96,26 +98,26 @@ module SimpleForm
       end
 
       def translate_collection
-        if translated_collection = translate_from_namespace(:options)
-          @collection = collection.map do |key|
-            html_key = "#{key}_html".to_sym
+        return unless translated_collection = translate_from_namespace(:options)
 
-            if translated_collection[html_key]
-              [translated_collection[html_key].html_safe || key, key.to_s]
-            else
-              [translated_collection[key] || key, key.to_s]
-            end
+        @collection = collection.map do |key|
+          html_key = "#{key}_html".to_sym
+
+          if translated_collection[html_key]
+            [translated_collection[html_key].html_safe || key, key.to_s]
+          else
+            [translated_collection[key] || key, key.to_s]
           end
-          true
         end
+        true
       end
 
       def translate_option(options, key)
-        if options[key] == :translate
-          namespace = key.to_s.pluralize
+        return unless options[key] == :translate
 
-          options[key] = translate_from_namespace(namespace, true)
-        end
+        namespace = key.to_s.pluralize
+
+        options[key] = translate_from_namespace(namespace, true)
       end
     end
   end

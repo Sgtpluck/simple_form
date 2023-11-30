@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Wrappers
     autoload :Builder, 'simple_form/wrappers/builder'

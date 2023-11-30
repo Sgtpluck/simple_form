@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   module Components
     module HTML5
@@ -6,7 +7,7 @@ module SimpleForm
         @html5 = false
       end
 
-      def html5(wrapper_options = nil)
+      def html5(_wrapper_options = nil)
         @html5 = true
 
         input_html_options[:required]        = input_html_required_option

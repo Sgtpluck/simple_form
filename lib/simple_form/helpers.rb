@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SimpleForm
   # Helpers are made of several helpers that cannot be turned on automatically.
   # For instance, disabled cannot be turned on automatically, it requires the
